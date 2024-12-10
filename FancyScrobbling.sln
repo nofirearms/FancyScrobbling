@@ -1,0 +1,38 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34714.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyScrobbling.Console", "FancyScrobbling.Console\FancyScrobbling.Console.csproj", "{DB54A39E-A1C7-4A80-8A25-A1571D102C13}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MediaDevicesShare", "MediaDevicesShare\MediaDevicesShare.shproj", "{8C6734B5-5BBB-413E-A5F2-FC7E6AAFFCE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyScrobbling.Core", "FancyScrobbling.Core\FancyScrobbling.Core.csproj", "{6A58E3B2-825B-4D25-B468-7FAB8FE914FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DB54A39E-A1C7-4A80-8A25-A1571D102C13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB54A39E-A1C7-4A80-8A25-A1571D102C13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB54A39E-A1C7-4A80-8A25-A1571D102C13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB54A39E-A1C7-4A80-8A25-A1571D102C13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A58E3B2-825B-4D25-B468-7FAB8FE914FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A58E3B2-825B-4D25-B468-7FAB8FE914FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A58E3B2-825B-4D25-B468-7FAB8FE914FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A58E3B2-825B-4D25-B468-7FAB8FE914FC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0BF31DCE-12AB-43EF-A22A-CCC436F5413B}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		MediaDevicesShare\MediaDevicesShare.projitems*{6a58e3b2-825b-4d25-b468-7fab8fe914fc}*SharedItemsImports = 5
+		MediaDevicesShare\MediaDevicesShare.projitems*{8c6734b5-5bbb-413e-a5f2-fc7e6aaffce7}*SharedItemsImports = 13
+		MediaDevicesShare\MediaDevicesShare.projitems*{db54a39e-a1c7-4a80-8a25-a1571d102c13}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal
