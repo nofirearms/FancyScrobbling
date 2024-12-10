@@ -1,0 +1,194 @@
+﻿{
+  "scrobbles": {
+    "scrobble": [
+      {
+        "artist": {
+          "corrected": "0",
+          "#text": "Zimne"
+        },
+        "album": {
+          "corrected": "0",
+          "#text": "Сигналы из хосписа"
+        },
+        "track": {
+          "corrected": "0",
+          "#text": "Конверт"
+        },
+        "ignoredMessage": {
+          "code": "0",
+          "#text": ""
+        },
+        "albumArtist": {
+          "corrected": "0",
+          "#text": ""
+        },
+        "timestamp": "1733792199"
+      },
+      {
+        "artist": {
+          "corrected": "0",
+          "#text": "Zimne"
+        },
+        "album": {
+          "corrected": "0",
+          "#text": "Сигналы из хосписа"
+        },
+        "track": {
+          "corrected": "0",
+          "#text": "Невесомости нет"
+        },
+        "ignoredMessage": {
+          "code": "0",
+          "#text": ""
+        },
+        "albumArtist": {
+          "corrected": "0",
+          "#text": ""
+        },
+        "timestamp": "1733792198"
+      },
+      {
+        "artist": {
+          "corrected": "0",
+          "#text": "Zimne"
+        },
+        "album": {
+          "corrected": "0",
+          "#text": "Сигналы из хосписа"
+        },
+        "track": {
+          "corrected": "0",
+          "#text": "Пополам"
+        },
+        "ignoredMessage": {
+          "code": "0",
+          "#text": ""
+        },
+        "albumArtist": {
+          "corrected": "0",
+          "#text": ""
+        },
+        "timestamp": "1733792197"
+      },
+      {
+        "artist": {
+          "corrected": "0",
+          "#text": "Zimne"
+        },
+        "album": {
+          "corrected": "0",
+          "#text": "Сигналы из хосписа"
+        },
+        "track": {
+          "corrected": "0",
+          "#text": "Зимне"
+        },
+        "ignoredMessage": {
+          "code": "0",
+          "#text": ""
+        },
+        "albumArtist": {
+          "corrected": "0",
+          "#text": ""
+        },
+        "timestamp": "1733792196"
+      },
+      {
+        "artist": {
+          "corrected": "0",
+          "#text": "Zimne"
+        },
+        "album": {
+          "corrected": "0",
+          "#text": "Сигналы из хосписа"
+        },
+        "track": {
+          "corrected": "0",
+          "#text": "Колыбельная"
+        },
+        "ignoredMessage": {
+          "code": "0",
+          "#text": ""
+        },
+        "albumArtist": {
+          "corrected": "0",
+          "#text": ""
+        },
+        "timestamp": "1733792195"
+      },
+      {
+        "artist": {
+          "corrected": "0",
+          "#text": "Zimne"
+        },
+        "album": {
+          "corrected": "0",
+          "#text": "Сигналы из хосписа"
+        },
+        "track": {
+          "corrected": "0",
+          "#text": "Снежный шар"
+        },
+        "ignoredMessage": {
+          "code": "0",
+          "#text": ""
+        },
+        "albumArtist": {
+          "corrected": "0",
+          "#text": ""
+        },
+        "timestamp": "1733792194"
+      },
+      {
+        "artist": {
+          "corrected": "0",
+          "#text": "Zimne"
+        },
+        "album": {
+          "corrected": "0",
+          "#text": "Сигналы из хосписа"
+        },
+        "track": {
+          "corrected": "0",
+          "#text": "Меланхолия"
+        },
+        "ignoredMessage": {
+          "code": "0",
+          "#text": ""
+        },
+        "albumArtist": {
+          "corrected": "0",
+          "#text": ""
+        },
+        "timestamp": "1733792193"
+      },
+      {
+        "artist": {
+          "corrected": "0",
+          "#text": "Zimne"
+        },
+        "album": {
+          "corrected": "0",
+          "#text": "Сигналы из хосписа"
+        },
+        "track": {
+          "corrected": "0",
+          "#text": "I need some evil"
+        },
+        "ignoredMessage": {
+          "code": "0",
+          "#text": ""
+        },
+        "albumArtist": {
+          "corrected": "0",
+          "#text": ""
+        },
+        "timestamp": "1733792192"
+      }
+    ],
+    "@attr": {
+      "ignored": 0,
+      "accepted": 8
+    }
+  }
+}
