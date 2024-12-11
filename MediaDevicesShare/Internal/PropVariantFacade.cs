@@ -106,9 +106,10 @@ namespace MediaDevices.Internal
 
         public int ToInt()
         {
+            //TODO Throwing an error of some kind, so i just commented it
             if (this.Value.vt == PropVariantType.VT_ERROR)
             {
-                Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
+                //Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
                 return 0;
             }
 
@@ -117,7 +118,7 @@ namespace MediaDevices.Internal
              && this.Value.vt != PropVariantType.VT_I2
              && this.Value.vt != PropVariantType.VT_I4)
             {
-                //TODO 111
+                
                 //throw new InvalidOperationException($"ToInt does not work for value type {this.Value.vt}");
             }
 
