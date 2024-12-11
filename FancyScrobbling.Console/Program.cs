@@ -1,4 +1,5 @@
 ﻿using FancyScrobbling.Core;
+using FancyScrobbling.Core.Database;
 using MediaDevices;
 using System.Reflection.Metadata.Ecma335;
 
@@ -15,16 +16,17 @@ namespace FancyScrobblingConsole
         {
             var deviceService = new DeviceService();
             var devices = deviceService.GetDevices();
+            var animatedConsole = new AnimatedConsole();
 
             for (int i = 0; i < devices.Count; i++)
             {
-                Console.WriteLine($"{i} {devices[i].FriendlyName}");
+                await animatedConsole.ConsoleAnimatedWriteLineAsync($"{i} {devices[i].FriendlyName}");
             }
-            Console.WriteLine("Choose a device");
+            await animatedConsole.ConsoleAnimatedWriteLineAsync("Choose a device");
             int.TryParse(Console.ReadLine(), out var device_number);
             if (device_number > devices.Count)
             {
-                Console.WriteLine("Invalid device number");
+                await animatedConsole.ConsoleAnimatedWriteLineAsync("Invalid device number");
                 Console.ReadLine();
                 return;
             }
@@ -35,7 +37,7 @@ namespace FancyScrobblingConsole
             var tracks_for_scrobbling = await LoadingAsync(() => deviceService.GetScribbleFiles(device), "Loading Tracks");
             if (!tracks_for_scrobbling.Any())
             {
-                Console.WriteLine("No tracks for scrobble.");
+                await animatedConsole.ConsoleAnimatedWriteLineAsync("No tracks for scrobble.");
                 Console.ReadLine();
                 device.Disconnect();
                 return;
@@ -43,41 +45,53 @@ namespace FancyScrobblingConsole
             foreach (var file in tracks_for_scrobbling)
             {
 
-                Console.WriteLine($" {tracks_for_scrobbling.IndexOf(file)} {file.Artist} - {file.Title} | {file.Album}");
+                await animatedConsole.ConsoleAnimatedWriteLineAsync($" {tracks_for_scrobbling.IndexOf(file)} {file.Artist} - {file.Title} | {file.Album}");
             }
 
             var lastfm = new LastFmService();
+
+            lastfm.ProgressStatus += async (sender, status) =>
+            {
+                await animatedConsole.ConsoleAnimatedWriteLineAsync(status);
+            };
+
             var token = await lastfm.GetToken();
+            if(token is null)
+            {
+                await animatedConsole.ConsoleAnimatedWriteLineAsync("Cat's get a token. The application wille be terminated.");
+                Console.ReadLine();
+                return;
+            }
             var session = lastfm.GetSessionFromDb();
             if(session is null)
             {
                 lastfm.GivePermissionInBrowser();
-                Console.WriteLine("Press Enter as you gave a permission to the application");
+                await animatedConsole.ConsoleAnimatedWriteLineAsync("Press Enter as you gave a permission to the application");
                 Console.ReadLine();
                 session = await lastfm.GetSession();
             }
 
             if (session is null)
             {
-                Console.WriteLine("Can't take session token. Application will be terminated");
+                await animatedConsole.ConsoleAnimatedWriteLineAsync("Can't take session token. Application will be terminated");
                 Console.ReadLine();
                 device.Disconnect();
                 return;
             }
 
-            Console.WriteLine($"Logged as {session.Name}");
-            Console.Write("Scrobble tracks?[y/n]"); 
+            await animatedConsole.ConsoleAnimatedWriteLineAsync($"Logged as {session.Name}");
+            await animatedConsole.ConsoleAnimatedWriteLineAsync("Scrobble tracks?[y/n]", ConsoleWriteType.Write); 
             var scr = Console.ReadLine();
             if (scr != "y") return;
 
-            var scrobble_result = await LoadingAsync(async() => await lastfm.ScrobbleTracks(device, tracks_for_scrobbling), "Scrobbling").Result;
+            var scrobble_result = await lastfm.ScrobbleTracks(device, tracks_for_scrobbling);
             if (scrobble_result)
             {
-                Console.WriteLine($"Success! Scrobbled {tracks_for_scrobbling.Count} tracks.");
+                await animatedConsole.ConsoleAnimatedWriteLineAsync($"Success! Scrobbled {tracks_for_scrobbling.Count} tracks.");
             }
             else
             {
-                Console.WriteLine("Failure.");
+                await animatedConsole.ConsoleAnimatedWriteLineAsync("Failure.");
             }
 
             device.Disconnect();
@@ -112,5 +126,45 @@ namespace FancyScrobblingConsole
             Console.Write(new String(' ', Console.BufferWidth));
             return result;
         }
+    }
+
+    public class AnimatedConsole
+    {
+        private readonly Queue<string> _queue;
+        private readonly Random _random;
+        private bool _isWorking;
+
+        public AnimatedConsole()
+        {
+            _queue = new Queue<string>();
+            _random = new Random();
+            _isWorking = false;
+        }
+
+        public async Task ConsoleAnimatedWriteLineAsync(string queueText, ConsoleWriteType consoleWriteType = ConsoleWriteType.WriteLine)
+        {
+            _queue.Enqueue(queueText);
+            if (_isWorking) return;
+            while (true)
+            {
+                _isWorking = true;
+
+                if (_queue.Count == 0) break;
+
+                var text = _queue.Dequeue();
+                for (int i = 0; i < text.Length; i++)
+                {
+                    Console.Write(text[i]);
+                    await Task.Delay(_random.Next(30));
+                }
+                if (consoleWriteType == ConsoleWriteType.WriteLine) Console.WriteLine();
+            }
+            _isWorking = false;
+        }
+    }
+
+    public enum ConsoleWriteType
+    {
+        Write, WriteLine
     }
 }

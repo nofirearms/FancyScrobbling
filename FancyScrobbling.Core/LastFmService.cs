@@ -1,16 +1,8 @@
 ﻿using FancyScrobbling.Core.Database;
 using FancyScrobbling.Core.Models;
 using MediaDevices;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Storage.Json;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Dynamic;
-using System.Linq;
 using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FancyScrobbling.Core
 {
@@ -21,6 +13,8 @@ namespace FancyScrobbling.Core
         private readonly DataManager _data;
         private Session _session;
         private AuthToken _token;
+
+        public event EventHandler<string> ProgressStatus;
 
         //получаем эти параметры после регистрации приложения на сайте
         private const string API_KEY = "c928ef6276d3f61383a255d94ce6cf52";
@@ -38,7 +32,15 @@ namespace FancyScrobbling.Core
         /// <returns></returns>
         public async Task<AuthToken> GetToken()
         {
+            ProgressStatus?.Invoke(this, "Getting token.");
             var response = await _client.GetAsync(new Uri($"http://ws.audioscrobbler.com/2.0/?method=auth.gettoken&api_key={API_KEY}&format=json"));
+            if(!response.IsSuccessStatusCode)
+            {
+#if DEBUG
+                Debug.WriteLine(response.StatusCode);
+#endif          
+                return null;
+            }
             var token = await response.Content.ReadFromJsonAsync<AuthToken>();
             await _data.AuthTokenRepository.SetAuthTokenAsync(token);
             _token = token;
@@ -50,11 +52,13 @@ namespace FancyScrobbling.Core
         /// </summary>
         public void GivePermissionInBrowser()
         {
+            ProgressStatus?.Invoke(this, "Getting permission from browser.");
             Helpers.OpenUrlInBrowser($"http://www.last.fm/api/auth/?api_key={API_KEY}&token={_token.Token}");
         }
 
         public Session GetSessionFromDb()
         {
+            ProgressStatus?.Invoke(this, "Getting session token from DB.");
             _session = _data.SessionTokenRepository.GetSessionToken();
             return _session;
         }
@@ -65,20 +69,25 @@ namespace FancyScrobbling.Core
         /// <returns></returns>
         public async Task<Session> GetSession()
         {
-            //_session = _data.SessionTokenRepository.GetSessionToken();
-            //if (_session != null) 
-            //{
-            //    return _session;
-            //}
-
+            ProgressStatus?.Invoke(this, "Getting session token from API.");
             var signature = Helpers.CreateMD5FromString($"api_key{API_KEY}methodauth.getSessiontoken{_token.Token}{SHARED_SECRET}");
             //format=json для того чтобы получать ответ в json формате, иначе будет xml
             var response = await _client.GetAsync(new Uri($"http://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_sig={signature}&api_key={API_KEY}&token={_token.Token}&format=json"));
             if (!response.IsSuccessStatusCode)
             {
+#if DEBUG
                 Debug.WriteLine("Can't get session response");
+#endif
+                return null;
             }
             var session = await response.Content.ReadFromJsonAsync<FastFmSession>();
+            if(session.Session is null)
+            {
+#if DEBUG
+                Debug.WriteLine("Session is null");
+#endif
+                return null;
+            }
             await _data.SessionTokenRepository.SetSessionTokenAsync(session.Session);
             //TODO запилить обработку ошибок
             _session = session.Session;
@@ -120,7 +129,9 @@ namespace FancyScrobbling.Core
         /// <param name="files"></param>
         /// <returns></returns>
         public async Task<bool> ScrobbleTracks(List<ScrobbleTrack> files)
-        {  
+        {
+
+            ProgressStatus?.Invoke(this, $"Scrobbling {files.Count} tracks.");
             var values = new Dictionary<string, string>
             {
                 { "api_key", API_KEY },
@@ -147,24 +158,32 @@ namespace FancyScrobbling.Core
             var response = await _client.PostAsync(new Uri("http://ws.audioscrobbler.com/2.0/"), content);
             if (!response.IsSuccessStatusCode)
             {
+#if DEBUG
                 Debug.WriteLine("Can't scrobble");
+#endif
                 return false;
             }
             //var response_content = await response.Content.ReadAsStringAsync();
             var response_content = await response.Content.ReadFromJsonAsync<ScrobbleTracksResponse>();
             if(response_content is null)
             {
+#if DEBUG
                 Debug.WriteLine("Can't read content");
+#endif
                 return false;
             }
-            if(response_content.Response is null)
+            if (response_content.Response is null)
             {
+#if DEBUG
                 Debug.WriteLine("Response is null");
+#endif
                 return false;
             }
             if(response_content.ErrorMessage != null)
             {
+#if DEBUG
                 Debug.WriteLine(response_content.ErrorMessage);
+#endif
                 return false;
             }
             return true;

@@ -1,9 +1,4 @@
 ﻿using FancyScrobbling.Core.Database.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FancyScrobbling.Core.Database
 {
@@ -18,7 +13,16 @@ namespace FancyScrobbling.Core.Database
         {
             _context = new AppDbContext();
             AuthTokenRepository = new AuthTokenRepository(_context);
-            SessionTokenRepository = new SessionTokenRepository(_context);
+            SessionTokenRepository = new SessionTokenRepository(_context); 
+        } 
+        /// <summary>
+        /// Seems like it doesn't work at all
+        /// </summary>
+        public void ClearDatabase()
+        {
+            _context.ChangeTracker.Clear();
+            _context.SaveChanges();
         }
+
     }
 }
