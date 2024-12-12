@@ -32,7 +32,7 @@ namespace FancyScrobbling.Core.Database.Repositories
 
         public AuthToken GetAuthToken()
         {
-            return _context.AuthTokens.LastOrDefault();
+            return _context.AuthTokens.OrderBy(o => o.DateCreated).LastOrDefault();
         }
 
         public async Task<bool> RemoveSessionToken()

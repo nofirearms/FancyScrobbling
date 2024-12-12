@@ -1,4 +1,5 @@
-﻿using FancyScrobbling.Core.Temp;
+﻿using FancyScrobbling.Core.Converters;
+using FancyScrobbling.Core.Temp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,8 +24,10 @@ namespace FancyScrobbling.Core.Models
     public class TrackScrobbles
     {
         [JsonPropertyName("scrobble")]
-        public Scrobble[] Scrobbles { get; set; }
-        [JsonPropertyName("attr")]
+        [JsonConverter(typeof(SingleOrArrayConverter))]
+        public List<Scrobble> Scrobbles { get; set; }
+
+        [JsonPropertyName("@attr")]
         public Attributes Attributes { get; set; }
     }
     public class Attributes
@@ -53,7 +56,7 @@ namespace FancyScrobbling.Core.Models
     {
         [JsonPropertyName("corrected")]
         public string Corrected { get; set; }
-        [JsonPropertyName("text")]
+        [JsonPropertyName("#text")]
         public string Text { get; set; }
     }
 
@@ -61,7 +64,7 @@ namespace FancyScrobbling.Core.Models
     {
         [JsonPropertyName("corrected")]
         public string Corrected { get; set; }
-        [JsonPropertyName("text")]
+        [JsonPropertyName("#text")]
         public string Text { get; set; }
     }
 
@@ -69,7 +72,7 @@ namespace FancyScrobbling.Core.Models
     {
         [JsonPropertyName("corrected")]
         public string Corrected { get; set; }
-        [JsonPropertyName("text")]
+        [JsonPropertyName("#text")]
         public string Text { get; set; }
     }
 
@@ -77,7 +80,7 @@ namespace FancyScrobbling.Core.Models
     {
         [JsonPropertyName("corrected")]
         public string Corrected { get; set; }
-        [JsonPropertyName("text")]
+        [JsonPropertyName("#text")]
         public string Text { get; set; }
     }
 
@@ -85,7 +88,7 @@ namespace FancyScrobbling.Core.Models
     {
         [JsonPropertyName("corrected")]
         public string Corrected { get; set; }
-        [JsonPropertyName("text")]
+        [JsonPropertyName("#text")]
         public string Text { get; set; }
     }
 
