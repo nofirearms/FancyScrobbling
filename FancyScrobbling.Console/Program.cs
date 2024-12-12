@@ -14,10 +14,16 @@ namespace FancyScrobblingConsole
 
         private async static Task ScrobbleTracksAsync()
         {
+            var animatedConsole = new AnimatedConsole();
             var deviceService = new DeviceService();
             var devices = deviceService.GetDevices();
-            var animatedConsole = new AnimatedConsole();
-
+            
+            if (devices.Count == 0)
+            {
+                await animatedConsole.ConsoleAnimatedWriteLineAsync($"There are no connected MTP devices. Application will be terminated.");
+                Console.ReadLine();
+                return;
+            }          
             for (int i = 0; i < devices.Count; i++)
             {
                 await animatedConsole.ConsoleAnimatedWriteLineAsync($"{i} {devices[i].FriendlyName}");
@@ -37,7 +43,7 @@ namespace FancyScrobblingConsole
             var tracks_for_scrobbling = await LoadingAsync(() => deviceService.GetScribbleFiles(device), "Loading Tracks");
             if (!tracks_for_scrobbling.Any())
             {
-                await animatedConsole.ConsoleAnimatedWriteLineAsync("No tracks for scrobble.");
+                await animatedConsole.ConsoleAnimatedWriteLineAsync("No tracks to scrobble.");
                 Console.ReadLine();
                 device.Disconnect();
                 return;

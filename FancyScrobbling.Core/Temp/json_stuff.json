@@ -192,3 +192,35 @@
     }
   }
 }
+
+{
+  "scrobbles": {
+    "scrobble": {
+      "artist": {
+        "corrected": "0",
+        "#text": "Kate Nash"
+      },
+      "album": {
+        "corrected": "0",
+        "#text": "Made Of Bricks"
+      },
+      "track": {
+        "corrected": "0",
+        "#text": "We Get On"
+      },
+      "ignoredMessage": {
+        "code": "0",
+        "#text": ""
+      },
+      "albumArtist": {
+        "corrected": "0",
+        "#text": ""
+      },
+      "timestamp": "1733958899"
+    },
+    "@attr": {
+      "ignored": 0,
+      "accepted": 1
+    }
+  }
+}
