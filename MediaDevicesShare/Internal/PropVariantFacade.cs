@@ -96,7 +96,7 @@ namespace MediaDevices.Internal
                     return ToUlong().ToString();
 
                 case PropVariantType.VT_ERROR:
-                    Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
+                    //Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
                     return "";
 
                 default:
@@ -148,7 +148,7 @@ namespace MediaDevices.Internal
         {
             if (this.Value.vt == PropVariantType.VT_ERROR)
             {
-                Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
+                //Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
                 return 0;
             }
 
@@ -168,7 +168,7 @@ namespace MediaDevices.Internal
         {
             if (this.Value.vt == PropVariantType.VT_ERROR)
             {
-                Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
+                //Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
                 return 0;
             }
 
@@ -188,7 +188,7 @@ namespace MediaDevices.Internal
         {
             if (this.Value.vt == PropVariantType.VT_ERROR)
             {
-                Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
+                //Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
                 return new DateTime();
             }
 
@@ -204,7 +204,7 @@ namespace MediaDevices.Internal
         {
             if (this.Value.vt == PropVariantType.VT_ERROR)
             {
-                Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
+                //Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
                 return false;
             }
 
@@ -220,7 +220,7 @@ namespace MediaDevices.Internal
         {
             if (this.Value.vt == PropVariantType.VT_ERROR)
             {
-                Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
+                //Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
                 return new Guid();
             }
 
@@ -240,7 +240,7 @@ namespace MediaDevices.Internal
         {
             if (this.Value.vt == PropVariantType.VT_ERROR)
             {
-                Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
+                //Debug.WriteLine($"VT_ERROR: 0x{this.Value.errorCode:X}");
                 return null;
             }
 

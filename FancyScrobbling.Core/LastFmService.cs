@@ -94,8 +94,15 @@ namespace FancyScrobbling.Core
             return _session;
         }
 
-        public async Task<bool> ScrobbleTracks(MediaDevice device, List<ScrobbleTrack> files, int batchSize = 50)
+        public async Task<bool> ScrobbleTracks(MediaDevice device, List<ScrobbleTrack> files, int batchSize = 10, int secondsBetweenTracks = 30)
         {
+            //расставляем timestamp в треки
+            var time = DateTime.Now;
+            for(int i = 0; i < files.Count; i++)
+            {
+                files[i].Timestamp = (Helpers.GetTimeStamp(DateTime.UtcNow) - i * secondsBetweenTracks).ToString();
+            }
+
             var current_batch = 0;
             while(current_batch * batchSize < files.Count)
             {
@@ -146,7 +153,7 @@ namespace FancyScrobbling.Core
                 values.Add($"artist[{i}]", files[i].Artist);
                 values.Add($"track[{i}]", files[i].Title);
                 values.Add($"album[{i}]", files[i].Album);
-                values.Add($"timestamp[{i}]", (Helpers.GetTimeStamp(DateTime.UtcNow) - i*60).ToString());
+                values.Add($"timestamp[{i}]", files[i].Timestamp);
             }
 
             var signature = Helpers.CreateMD5FromString(GetApiSignature(values, SHARED_SECRET));
@@ -156,19 +163,20 @@ namespace FancyScrobbling.Core
 
             var content = new FormUrlEncodedContent(values);
             var response = await _client.PostAsync(new Uri("http://ws.audioscrobbler.com/2.0/"), content);
-            if (!response.IsSuccessStatusCode)
+            if (response is null)
             {
 #if DEBUG
-                Debug.WriteLine("Can't scrobble");
+                Debug.WriteLine($"Response is null");
 #endif
+                ProgressStatus?.Invoke(this, "Response is null");
                 return false;
             }
             //var response_content_string = await response.Content.ReadAsStringAsync();
             var response_content = await response.Content.ReadFromJsonAsync<ScrobbleTracksResponse>();
-            if(response_content is null)
+            if(!response.IsSuccessStatusCode)
             {
 #if DEBUG
-                Debug.WriteLine("Can't read content");
+                Debug.WriteLine($"Error: {response_content.ErrorNum} | {response_content.ErrorMessage}");
 #endif
                 return false;
             }
@@ -196,7 +204,10 @@ namespace FancyScrobbling.Core
         /// <returns></returns>
         private static string GetApiSignature(Dictionary<string, string> dictionary, string secret)
         {
-            var ordered = dictionary.OrderBy(o => o.Key);
+            //var ordered = dictionary.OrderBy(o => o.Key);
+            //custom comparer for natural order, (1, 2, 10) instead of (1, 10, 2)
+            var comparer = new Helpers.NaturalStringComparer();
+            var ordered = dictionary.OrderBy(o => o.Key, comparer);
             var result = "";
             foreach (var pair in ordered)
             {
