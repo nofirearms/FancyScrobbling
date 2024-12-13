@@ -2,6 +2,7 @@
 using FancyScrobbling.Core.Database;
 using MediaDevices;
 using System.Reflection.Metadata.Ecma335;
+using static FancyScrobbling.Core.Helpers;
 
 namespace FancyScrobblingConsole
 {
@@ -17,7 +18,7 @@ namespace FancyScrobblingConsole
             var animatedConsole = new AnimatedConsole();
             var deviceService = new DeviceService();
             var devices = deviceService.GetDevices();
-            
+
             if (devices.Count == 0)
             {
                 await animatedConsole.ConsoleAnimatedWriteLineAsync($"There are no connected MTP devices. Application will be terminated.");
@@ -161,7 +162,12 @@ namespace FancyScrobblingConsole
                 for (int i = 0; i < text.Length; i++)
                 {
                     Console.Write(text[i]);
-                    await Task.Delay(_random.Next(30));
+#if DEBUG
+                    
+#else
+                    await Task.Delay(_random.Next(10));
+#endif
+
                 }
                 if (consoleWriteType == ConsoleWriteType.WriteLine) Console.WriteLine();
             }
