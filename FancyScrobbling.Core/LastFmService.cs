@@ -93,7 +93,7 @@ namespace FancyScrobbling.Core
             _session = session.Session;
             return _session;
         }
-
+        //TODO разобраться почему не отправляется больше 10 файлов за 1 раз, возможно что-то с сортировкой
         public async Task<bool> ScrobbleTracks(MediaDevice device, List<ScrobbleTrack> files, int batchSize = 10, int secondsBetweenTracks = 30)
         {
             //расставляем timestamp в треки
