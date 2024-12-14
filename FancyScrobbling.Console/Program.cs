@@ -62,16 +62,19 @@ namespace FancyScrobblingConsole
                 await animatedConsole.ConsoleAnimatedWriteLineAsync(status);
             };
 
-            var token = await lastfm.GetToken();
-            if(token is null)
-            {
-                await animatedConsole.ConsoleAnimatedWriteLineAsync("Cat's get a token. The application wille be terminated.");
-                Console.ReadLine();
-                return;
-            }
+            //getting session token from database
             var session = lastfm.GetSessionFromDb();
+            //if there is no token in db, getting it from from lastfm 
             if(session is null)
             {
+                var token = await lastfm.GetToken();
+                if (token is null)
+                {
+                    await animatedConsole.ConsoleAnimatedWriteLineAsync("Cat's get a token. The application wille be terminated.");
+                    Console.ReadLine();
+                    return;
+                }
+
                 lastfm.GivePermissionInBrowser();
                 await animatedConsole.ConsoleAnimatedWriteLineAsync("Press Enter as you gave a permission to the application");
                 Console.ReadLine();
