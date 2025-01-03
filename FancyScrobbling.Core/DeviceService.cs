@@ -1,5 +1,6 @@
 ﻿using FancyScrobbling.Core.Models;
 using MediaDevices;
+using MediaDevices.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,7 +19,14 @@ namespace FancyScrobbling.Core
 
         public List<ScrobbleTrack> GetScribbleFiles(MediaDevice device)
         {
-            var items = device.EnumerateFileItems("\\Internal Storage", "", SearchOption.AllDirectories).ToList();
+            var items = new List<Item>();
+            //Перебераем диски, на плеере может быть Internal storage и External storage (флеха)
+            foreach(var drive in device.GetDrives())
+            {
+                var drive_items = device.EnumerateFileItems(drive.Name, "", SearchOption.AllDirectories).ToList();
+                items.AddRange(drive_items);
+            }
+
             //var items = EnumerateFileItems(path, searchPattern, searchOption);
             var used_items = items.Where(i => i.UseCount > 0);
             var result = new List<ScrobbleTrack>();
