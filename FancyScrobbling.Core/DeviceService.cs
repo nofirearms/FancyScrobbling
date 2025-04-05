@@ -17,8 +17,29 @@ namespace FancyScrobbling.Core
 
         //public List<MediaFileInfo> GetUsedFiles(MediaDevice device) => device.EnumerateUsedMediaFilesInfo("\\Internal Storage", "", SearchOption.AllDirectories).ToList();
 
+        public bool ConnectDevice(MediaDevice device)
+        {
+            if (device is null) return false;
+            device.Connect();
+            return true;
+        }
+
+        public void DisconnectDevice(MediaDevice device)
+        {
+            device.Disconnect(); 
+        }
+
+
+
         public List<ScrobbleTrack> GetScribbleFiles(MediaDevice device)
         {
+            if (device is null) return new List<ScrobbleTrack>();
+
+            if (!device.IsConnected)
+            {
+                device.Connect();
+            }
+
             var items = new List<Item>();
             //Перебераем диски, на плеере может быть Internal storage и External storage (флеха)
             foreach(var drive in device.GetDrives())

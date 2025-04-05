@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace FancyScrobbling.Core.Models
 {
-    public class FastFmSession
+    public class LastFmSession
     {
         [JsonPropertyName("status")]
         public string Status { get; set; }

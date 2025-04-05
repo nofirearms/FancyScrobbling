@@ -1,6 +1,7 @@
 ﻿using FancyScrobbling.Core.Database;
 using FancyScrobbling.Core.Models;
 using MediaDevices;
+using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 using System.Net.Http.Json;
 
@@ -26,25 +27,23 @@ namespace FancyScrobbling.Core
             _data = new DataManager();
         }
 
+        public bool IsAuthorized => GetSessionFromDb() is null ? false : true;
+
         /// <summary>
         /// Получаем токен для авторизации, срок службы токена 60 минут
         /// </summary>
-        /// <returns></returns>
-        public async Task<AuthToken> GetToken()
+        /// <returns>AuthToken</returns>
+        public async Task<Result> GetTokenAsync()
         {
-            ProgressStatus?.Invoke(this, "Getting token.");
             var response = await _client.GetAsync(new Uri($"http://ws.audioscrobbler.com/2.0/?method=auth.gettoken&api_key={API_KEY}&format=json"));
             if(!response.IsSuccessStatusCode)
             {
-#if DEBUG
-                Debug.WriteLine(response.StatusCode);
-#endif          
-                return null;
+                return new Result(false, await response.Content.ReadAsStringAsync());
             }
             var token = await response.Content.ReadFromJsonAsync<AuthToken>();
-            await _data.AuthTokenRepository.SetAuthTokenAsync(token);
+            //await _data.AuthTokenRepository.SetAuthTokenAsync(token);
             _token = token;
-            return token;
+            return new Result(true, token);
         }
 
         /// <summary>
@@ -52,49 +51,70 @@ namespace FancyScrobbling.Core
         /// </summary>
         public void GivePermissionInBrowser()
         {
-            ProgressStatus?.Invoke(this, "Getting permission from browser.");
             Helpers.OpenUrlInBrowser($"http://www.last.fm/api/auth/?api_key={API_KEY}&token={_token.Token}");
+        }
+
+        /// <summary>
+        /// Получаем временный токен, открываем браузер
+        /// </summary>
+        /// <returns>AuthToken</returns>
+        public async Task<Result> GetAccountAccessAsync()
+        {
+            var token = await GetTokenAsync();
+            if (token == null) return new Result(false, "Error. Couldn't get token.");
+
+            GivePermissionInBrowser();
+            return new Result(true, token);
         }
 
         public Session GetSessionFromDb()
         {
-            ProgressStatus?.Invoke(this, "Getting session token from DB.");
             _session = _data.SessionTokenRepository.GetSessionToken();
             return _session;
+        }
+
+        public async Task<bool> RemoveSessionFromDb()
+        {
+            return await _data.SessionTokenRepository.RemoveSessionToken();
         }
 
         /// <summary>
         /// Получаем токен сессии, срок службы токена неограниченный
         /// </summary>
-        /// <returns></returns>
-        public async Task<Session> GetSession()
+        /// <returns>Session</returns>
+        public async Task<Result> GetSessionAsync()
         {
-            ProgressStatus?.Invoke(this, "Getting session token from API.");
+            if (_token is null) return new Result(false, "Token is null");
             var signature = Helpers.CreateMD5FromString($"api_key{API_KEY}methodauth.getSessiontoken{_token.Token}{SHARED_SECRET}");
             //format=json для того чтобы получать ответ в json формате, иначе будет xml
             var response = await _client.GetAsync(new Uri($"http://ws.audioscrobbler.com/2.0/?method=auth.getSession&api_sig={signature}&api_key={API_KEY}&token={_token.Token}&format=json"));
             if (!response.IsSuccessStatusCode)
             {
-#if DEBUG
-                Debug.WriteLine("Can't get session response");
-#endif
-                return null;
+                return new Result(false, await response.Content.ReadAsStringAsync());
             }
-            var session = await response.Content.ReadFromJsonAsync<FastFmSession>();
+            var session = await response.Content.ReadFromJsonAsync<LastFmSession>();
             if(session.Session is null)
             {
-#if DEBUG
-                Debug.WriteLine("Session is null");
-#endif
-                return null;
+                return new Result(false, "Session is null");
             }
             await _data.SessionTokenRepository.SetSessionTokenAsync(session.Session);
             //TODO запилить обработку ошибок
             _session = session.Session;
-            return _session;
+            return new Result(true, _session);
         }
+
+
+
         //TODO разобраться почему не отправляется больше 10 файлов за 1 раз, возможно что-то с сортировкой
-        public async Task<bool> ScrobbleTracks(MediaDevice device, List<ScrobbleTrack> files, int batchSize = 10, int secondsBetweenTracks = 30)
+        /// <summary>
+        /// Returns source files in case of success
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="files"></param>
+        /// <param name="batchSize"></param>
+        /// <param name="secondsBetweenTracks"></param>
+        /// <returns>ScrobbleTracks</returns>
+        public async Task<Result> ScrobbleTracksAsync(MediaDevice device, List<ScrobbleTrack> files, int batchSize = 10, int secondsBetweenTracks = 30)
         {
             //расставляем timestamp в треки
             var time = DateTime.Now;
@@ -108,12 +128,11 @@ namespace FancyScrobbling.Core
             {
                 var batch = files.Skip(current_batch * batchSize).Take(batchSize).ToList();
 
-                var scrobble_result = await ScrobbleTracks(batch);
+                var scrobble_result = await ScrobbleTracksAsync(batch);
 
-                if (!scrobble_result)
+                if (!scrobble_result.Success)
                 {
-                    Debug.WriteLine("Error while scrobbling tracks");
-                    return false;
+                    return new Result(false, scrobble_result.Parameter);
                 }
 
                 foreach(var scrobble_track in batch)
@@ -127,18 +146,17 @@ namespace FancyScrobbling.Core
 
                 current_batch++;
             }
-            return true;
+            return new Result(true, files);
         }
 
         /// <summary>
-        /// Скробблим трэки
+        /// Скробблим треки
         /// </summary>
         /// <param name="files"></param>
-        /// <returns></returns>
-        public async Task<bool> ScrobbleTracks(List<ScrobbleTrack> files)
+        /// <returns>ScrobbleTracks</returns>
+        public async Task<Result> ScrobbleTracksAsync(List<ScrobbleTrack> files)
         {
 
-            ProgressStatus?.Invoke(this, $"Scrobbling {files.Count} tracks.");
             var values = new Dictionary<string, string>
             {
                 { "api_key", API_KEY },
@@ -163,45 +181,28 @@ namespace FancyScrobbling.Core
 
             var content = new FormUrlEncodedContent(values);
             var response = await _client.PostAsync(new Uri("http://ws.audioscrobbler.com/2.0/"), content);
-            if (response is null)
-            {
-#if DEBUG
-                Debug.WriteLine($"Response is null");
-#endif
-                ProgressStatus?.Invoke(this, "Response is null");
-                return false;
-            }
-            //var response_content_string = await response.Content.ReadAsStringAsync();
+
             var response_content = await response.Content.ReadFromJsonAsync<ScrobbleTracksResponse>();
             if(!response.IsSuccessStatusCode)
             {
-#if DEBUG
-                Debug.WriteLine($"Error: {response_content.ErrorNum} | {response_content.ErrorMessage}");
-#endif
-                return false;
+                return new Result(false, $"Error: {response_content.ErrorNum} | {response_content.ErrorMessage}");
             }
             if (response_content.Response is null)
             {
-#if DEBUG
-                Debug.WriteLine("Response is null");
-#endif
-                return false;
+                return new Result(false, $"Error: Response is null.");
             }
             if(response_content.ErrorMessage != null)
             {
-#if DEBUG
-                Debug.WriteLine(response_content.ErrorMessage);
-#endif
-                return false;
+                new Result(false, response_content.ErrorMessage);
             }
-            return true;
+            return new Result(true, files);
         }
         /// <summary>
         /// Получаем api_sig необходимый для запросов
         /// </summary>
         /// <param name="dictionary"></param>
         /// <param name="secret"></param>
-        /// <returns></returns>
+        /// <returns>string</returns>
         private static string GetApiSignature(Dictionary<string, string> dictionary, string secret)
         {
             //var ordered = dictionary.OrderBy(o => o.Key);
@@ -216,5 +217,19 @@ namespace FancyScrobbling.Core
             result += secret;
             return result;
         }
+
+        public bool RemoveScrobbleTracks(MediaDevice device, IEnumerable<ScrobbleTrack> tracks)
+        {
+            foreach (var scrobble_track in tracks)
+            {
+                var file_info = device.GetFileInfo(scrobble_track.Path);
+                if (file_info is null) continue;
+
+                var count = file_info.UseCount - 1;
+                file_info.UseCount = int.Max(0, (int)count);
+            }
+            return true;
+        }
+
     }
 }
