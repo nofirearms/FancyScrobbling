@@ -1,0 +1,57 @@
+<Window
+    x:Class="FancyScrobbling.Avalonia.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FancyScrobbling.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:FancyScrobbling.Avalonia.ViewModels"
+    Title="Fancy Scrobbling"
+    Width="700"
+    Height="500"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:MainWindowViewModel"
+    Icon="/Assets/lastfmicon.ico"
+    mc:Ignorable="d">
+
+    <Border>
+        <Grid>
+            <Grid>
+                <local:ScrobblingView DataContext="{Binding ScrobblingViewModel}" />
+                <ItemsControl ItemsSource="{Binding Dialogs}">
+                    <ItemsControl.DataTemplates>
+                        <DataTemplate DataType="vm:AuthorizationViewModel">
+                            <local:DialogView>
+                                <local:DialogView.CustomContent>
+                                    <local:AuthorizationView />
+                                </local:DialogView.CustomContent>
+                            </local:DialogView>
+                        </DataTemplate>
+                        <DataTemplate DataType="vm:MessageBoxViewModel">
+                            <local:DialogView>
+                                <local:DialogView.CustomContent>
+                                    <local:MessageBoxView />
+                                </local:DialogView.CustomContent>
+                            </local:DialogView>
+                        </DataTemplate>
+                    </ItemsControl.DataTemplates>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Grid />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+
+                <Border IsVisible="{Binding IsLoading}">
+                    <ProgressBar VerticalAlignment="Top" IsIndeterminate="True" />
+                    <Border.Background>
+                        <SolidColorBrush Opacity="0.5" Color="Black" />
+                    </Border.Background>
+                </Border>
+            </Grid>
+        </Grid>
+
+    </Border>
+
+</Window>

@@ -1,0 +1,96 @@
+<UserControl
+    x:Class="FancyScrobbling.Avalonia.ScrobblingView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:FancyScrobbling.Avalonia.Behaviors"
+    xmlns:coremodels="using:FancyScrobbling.Core.Models"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:FancyScrobbling.Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:FancyScrobbling.Avalonia.ViewModels"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:DataType="vm:ScrobblingViewModel"
+    mc:Ignorable="d">
+
+    <Grid Margin="5" RowDefinitions="auto,*,auto">
+        <DockPanel>
+
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <TextBlock VerticalAlignment="Center" Text="{Binding Username}" />
+                <Button
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    Command="{Binding LogoutCommand}"
+                    Content="Logout" />
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                <ComboBox
+                    Width="150"
+                    VerticalAlignment="Center"
+                    ItemsSource="{Binding Devices}"
+                    SelectedItem="{Binding Device, Mode=TwoWay}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding FriendlyName}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button
+                    Margin="5,0,0,0"
+                    VerticalAlignment="Center"
+                    Command="{Binding GetTracksCommand}"
+                    Content="Get tracks" />
+            </StackPanel>
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Text="{Binding Tracks.Count, StringFormat=\{0\} tracks}" />
+        </DockPanel>
+        <ListBox
+            Grid.Row="1"
+            Margin="0,5"
+            ItemsSource="{Binding Tracks}"
+            SelectionMode="Multiple">
+            <Interaction.Behaviors>
+                <behaviors:ListBixBehaviors SelectedItems="{Binding SelectedTracks, Mode=TwoWay}" />
+            </Interaction.Behaviors>
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="Padding" Value="0" />
+                </Style>
+            </ListBox.Styles>
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="vm:ScrobbleTrackViewModel">
+                    <Grid
+                        Height="30"
+                        Background="Transparent"
+                        ColumnDefinitions="30,*,*,*">
+                        <Interaction.Behaviors>
+                            <behaviors:ListViewRightClickBehavior Command="{Binding $parent[UserControl].((vm:ScrobblingViewModel)DataContext).OpenContextMenuCommand}" />
+                        </Interaction.Behaviors>
+                        <TextBlock
+                            Margin="5,0,0,0"
+                            VerticalAlignment="Center"
+                            Text="{Binding Index}" />
+                        <TextBlock
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Text="{Binding Title}" />
+                        <TextBlock
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            Text="{Binding Artist}" />
+                        <TextBlock
+                            Grid.Column="3"
+                            VerticalAlignment="Center"
+                            Text="{Binding Album}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <Button Command="{Binding ScrobbleCommand}" Content="Scrobble" />
+        </StackPanel>
+    </Grid>
+</UserControl>

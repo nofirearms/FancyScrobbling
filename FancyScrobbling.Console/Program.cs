@@ -67,7 +67,7 @@ namespace FancyScrobblingConsole
             //if there is no token in db, getting it from from lastfm 
             if(session is null)
             {
-                var token = await lastfm.GetToken();
+                var token = await lastfm.GetTokenAsync();
                 if (token is null)
                 {
                     await animatedConsole.ConsoleAnimatedWriteLineAsync("Cat's get a token. The application wille be terminated.");
@@ -78,7 +78,7 @@ namespace FancyScrobblingConsole
                 lastfm.GivePermissionInBrowser();
                 await animatedConsole.ConsoleAnimatedWriteLineAsync("Press Enter as you gave a permission to the application");
                 Console.ReadLine();
-                session = await lastfm.GetSession();
+                session = await lastfm.GetSessionAsync();
             }
 
             if (session is null)
@@ -94,7 +94,7 @@ namespace FancyScrobblingConsole
             var scr = Console.ReadLine();
             if (scr != "y") return;
 
-            var scrobble_result = await lastfm.ScrobbleTracks(device, tracks_for_scrobbling);
+            var scrobble_result = await lastfm.ScrobbleTracksAsync(device, tracks_for_scrobbling);
             if (scrobble_result)
             {
                 await animatedConsole.ConsoleAnimatedWriteLineAsync($"Success! Scrobbled {tracks_for_scrobbling.Count} tracks.");

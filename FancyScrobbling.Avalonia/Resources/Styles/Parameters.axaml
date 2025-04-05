@@ -1,0 +1,11 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Design.PreviewWith>
+        <Border
+            Width="30"
+            Height="30"
+            Background="{DynamicResource CustomBackground}" />
+    </Design.PreviewWith>
+
+    <SolidColorBrush x:Key="CustomBackground" Color="#191919" />
+</ResourceDictionary>

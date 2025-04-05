@@ -1,0 +1,45 @@
+<UserControl
+    x:Class="FancyScrobbling.Avalonia.AuthorizationView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:Avalonia"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:FancyScrobbling.Avalonia.ViewModels"
+    x:DataType="vm:AuthorizationViewModel"
+    mc:Ignorable="d">
+    <DockPanel>
+        <StackPanel
+            Margin="0,0,0,5"
+            HorizontalAlignment="Center"
+            DockPanel.Dock="Bottom"
+            Orientation="Horizontal">
+            <Button
+                Width="85"
+                HorizontalContentAlignment="Center"
+                Command="{Binding AuthorizeCommand}"
+                Content="Authorize" />
+            <Button
+                Width="85"
+                Margin="30,0,0,0"
+                HorizontalContentAlignment="Center"
+                Command="{Binding AcceptCommand}"
+                Content="OK"
+                DockPanel.Dock="Bottom" />
+        </StackPanel>
+
+        <StackPanel Margin="5" Orientation="Vertical">
+            <TextBlock
+                Margin="0,0,0,3"
+                HorizontalAlignment="Center"
+                FontSize="18"
+                Text="AUTHORIZATION" />
+            <TextBlock>
+                1. Click the "Authorize" button to open your Last.fm profile in the internet browser.<LineBreak />
+                2. Click the "Yes, Allow Access" button at the opened page in the internet browser.<LineBreak />
+                3. Click the "OK" button at this window after successful approving in your Last.fm profile.</TextBlock>
+        </StackPanel>
+
+    </DockPanel>
+
+</UserControl>

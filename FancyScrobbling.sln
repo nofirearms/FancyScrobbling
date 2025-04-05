@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyScrobbling.Console", "FancyScrobbling.Console\FancyScrobbling.Console.csproj", "{DB54A39E-A1C7-4A80-8A25-A1571D102C13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyScrobbling.Console", "FancyScrobbling.Console\FancyScrobbling.Console.csproj", "{DB54A39E-A1C7-4A80-8A25-A1571D102C13}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "MediaDevicesShare", "MediaDevicesShare\MediaDevicesShare.shproj", "{8C6734B5-5BBB-413E-A5F2-FC7E6AAFFCE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyScrobbling.Core", "FancyScrobbling.Core\FancyScrobbling.Core.csproj", "{6A58E3B2-825B-4D25-B468-7FAB8FE914FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FancyScrobbling.Core", "FancyScrobbling.Core\FancyScrobbling.Core.csproj", "{6A58E3B2-825B-4D25-B468-7FAB8FE914FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FancyScrobbling.Avalonia", "FancyScrobbling.Avalonia\FancyScrobbling.Avalonia.csproj", "{3514975C-D82B-4AC0-AE3E-828408260815}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{6A58E3B2-825B-4D25-B468-7FAB8FE914FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6A58E3B2-825B-4D25-B468-7FAB8FE914FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6A58E3B2-825B-4D25-B468-7FAB8FE914FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3514975C-D82B-4AC0-AE3E-828408260815}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3514975C-D82B-4AC0-AE3E-828408260815}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3514975C-D82B-4AC0-AE3E-828408260815}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3514975C-D82B-4AC0-AE3E-828408260815}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
